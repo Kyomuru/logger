@@ -36,4 +36,4 @@ process("start") ---> [here you can find the date and time] >> programm start
 
 process("close") ---> [here you can find the date and time] >> programm close
 
-P.S. if you use  the command: close the file of the logs will be automatcly closed! use only at the end of the program!
+P.S. if you use  the command: close the file of the logs will be automatically closed! use only at the end of the program!
