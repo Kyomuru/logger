@@ -6,7 +6,9 @@ in this version the log.txt file will be created on desktop, for change the dire
 
 Here you can find all error you can find in your log:
 
-Error_01 = invalid syntax: you can get this error in case you have written a wrong syntax, you can try to control the process() func (if you used it) in your code .
+Error_01 = invalid syntax: you can get this error in case you have written a wrong syntax, you can try to control the process() func (if you used it) in your code.
+
+Error_02 = wrong credentials: you can get this error in case you're tryng to send an email with wrong credentials, try to saw the logconf.txt file!
 
 Here you can find a short guide about all func:
 
