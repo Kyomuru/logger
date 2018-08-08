@@ -210,14 +210,6 @@ class logger(object):
         cfg_cont = "email = {}\n password = {}\n emailto = {}".format(self.actual_email, self.actual_pass,self.actual_emailto)
         self.cfg_file.write(cfg_cont)
 
-if __name__ == "__main__":
-    logs = logger()
-    logs.general_log("hi")
-    logs.send_email()
-    logs.general_log("hi again!")
-
-
-
 
 
 
