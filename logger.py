@@ -47,7 +47,7 @@ class logger(object):
 
     def var_changed(self,var,name_var):
         date = datetime.now().strftime('%H:%M:%S %d/%m/%Y')
-        self.logger_file.write("[{}]>> value of {} changed in {}\n.".format(date, name_var, str(var)))
+        self.logger_file.write("[{}]>> value of {} changed in {}\n".format(date, name_var, str(var)))
 
     def process(self,command):
         date = datetime.now().strftime('%H:%M:%S %d/%m/%Y')
@@ -57,7 +57,7 @@ class logger(object):
             self.logger_file.write("[{}]>> process close.\n".format(date))
             self.logger_file.close()
         else:
-            self.logger_file.write("[{}]>> Error_01 = invalid syntax.\n".format(date))
+            self.logger_file.write("[{}]>> Error_01: invalid syntax.\n".format(date))
 
     def cfg_menu(self):
         date = datetime.now().strftime('%H:%M:%S %d/%m/%Y')
@@ -146,7 +146,7 @@ class logger(object):
                                                                                    self.actual_emailto)
                      self.cfg_file.write(cfg_cont)
                      date = datetime.now().strftime('%H:%M:%S %d/%m/%Y')
-                     self.logger_file.write("[{}]>> email = {} (in logger config).\n".format(date, chose))
+                     self.logger_file.write("[{}]>> email = {} (in logger config).\n".format(date))
                      break
 
          elif int(chose) == 4:
@@ -160,12 +160,14 @@ class logger(object):
              self.cfg_file.write(cfg_cont)
 
         date = datetime.now().strftime('%H:%M:%S %d/%m/%Y')
-        self.logger_file.write("[{}]>> closing cfg menù...\n".format(date, chose))
+        self.logger_file.write("[{}]>> closing cfg menù...\n".format(date))
 
     def send_email(self):
+        credential = False
         date = datetime.now().strftime('%H:%M:%S %d/%m/%Y')
-        self.logger_file.write("[{}]>> sending email...\n".format(date, chose))
+        self.logger_file.write("[{}]>> sending email...\n".format(date))
         self.logger_file.close()
+        cont_logs = open(self.dir_l, "r").read()
         msg = MIMEMultipart()
         msg['From'] = self.actual_email
         msg['To'] = self.actual_emailto
@@ -189,13 +191,30 @@ class logger(object):
 
         server = smtplib.SMTP('smtp.gmail.com', 587)
         server.starttls()
-        server.login(fromaddr, password)
-        server.sendmail(fromaddr, toaddr, text)
-        server.quit()
+        try:
+            server.login(fromaddr, password)
+            server.sendmail(fromaddr, toaddr, text)
+            server.quit()
+        except:
+            credential = True
 
-        self.logger_file = open("C:\\Users\\{}\\Desktop\\log.txt".format(self.user), "w")
+        self.logger_file = open(self.dir_l, "w")
+        self.logger_file.write(cont_logs)
+        if credential:
+            date = datetime.now().strftime('%H:%M:%S %d/%m/%Y')
+            self.logger_file.write("[{}]>> Error_02: wrong credential\n".format(date))
+        else:
+            date = datetime.now().strftime('%H:%M:%S %d/%m/%Y')
+            self.logger_file.write("[{}]>> email sent!.\n".format(date))
+
         cfg_cont = "email = {}\n password = {}\n emailto = {}".format(self.actual_email, self.actual_pass,self.actual_emailto)
         self.cfg_file.write(cfg_cont)
+
+if __name__ == "__main__":
+    logs = logger()
+    logs.general_log("hi")
+    logs.send_email()
+    logs.general_log("hi again!")
 
 
 
