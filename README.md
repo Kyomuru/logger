@@ -4,12 +4,6 @@ Simple logger project in python
 This is a simple logger module for python, is really simple to use.
 in this version the log.txt file will be created on desktop, for change the directory you can open the file with some python ide and change the directory (dir_l var).
 
-Here you can find all error you can find in your log:
-
-Error_01 = invalid syntax: you can get this error in case you have written a wrong syntax, you can try to control the process() func (if you used it) in your code.
-
-Error_02 = wrong credentials: you can get this error in case you're tryng to send an email with wrong credentials, try to saw the logconf.txt file!
-
 Here you can find a short guide about all func:
 
 general_log(text): This func will write on the logs file with the string or string variable, like this:
