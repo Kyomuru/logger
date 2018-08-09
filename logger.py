@@ -34,9 +34,14 @@ class logger(object):
         self.logger_file = open(self.dir_l, "w")
         self.cfg_file = open("logconf.txt","r+")
         self.cfg_actual = self.cfg_file.readlines()
-        self.actual_email = self.cfg_actual[0].splitlines()[0].split(" = ")[1]
-        self.actual_pass = self.cfg_actual[1].splitlines()[0].split(" = ")[1]
-        self.actual_emailto = self.cfg_actual[2].splitlines()[0].split(" = ")[1]
+        try:
+            self.actual_email = self.cfg_actual[0].splitlines()[0].split(" = ")[1]
+            self.actual_pass = self.cfg_actual[1].splitlines()[0].split(" = ")[1]
+            self.actual_emailto = self.cfg_actual[2].splitlines()[0].split(" = ")[1]
+        except:
+            date = datetime.now().strftime('%H:%M:%S %d/%m/%Y')
+            self.logger_file.write("[{}]>> Error_03: logconf.txt is empty, please check the file.\n".format(date))
+            self.emailnot = True
         self.cfg_file.close()
         self.cfg_file = open("logconf.txt", "w+")
 
@@ -163,80 +168,53 @@ class logger(object):
         self.logger_file.write("[{}]>> closing cfg menù...\n".format(date))
 
     def send_email(self):
-        credential = False
-        date = datetime.now().strftime('%H:%M:%S %d/%m/%Y')
-        self.logger_file.write("[{}]>> sending email...\n".format(date))
-        self.logger_file.close()
-        cont_logs = open(self.dir_l, "r").read()
-        msg = MIMEMultipart()
-        msg['From'] = self.actual_email
-        msg['To'] = self.actual_emailto
-        msg['Subject'] = "logs"
-        body = "here the logs"
-        msg.attach(MIMEText(body,'plain'))
-
-        fromaddr = self.actual_email
-        password = self.actual_pass
-        toaddr = self.actual_emailto
-        filename = "logs.txt"
-
-        attachment = open(self.dir_l,'rb')
-
-        part = MIMEBase('application', 'octet-stream')
-        part.set_payload((attachment).read())
-        encoders.encode_base64(part)
-        part.add_header('Content-Disposition', "attachment; filename= {}".format(filename))
-        msg.attach(part)
-        text = msg.as_string()
-
-        server = smtplib.SMTP('smtp.gmail.com', 587)
-        server.starttls()
-        try:
-            server.login(fromaddr, password)
-            server.sendmail(fromaddr, toaddr, text)
-            server.quit()
-        except:
-            credential = True
-
-        self.logger_file = open(self.dir_l, "w")
-        self.logger_file.write(cont_logs)
-        if credential:
+        if not self.emailnot:
+            credential = False
             date = datetime.now().strftime('%H:%M:%S %d/%m/%Y')
-            self.logger_file.write("[{}]>> Error_02: wrong credential\n".format(date))
+            self.logger_file.write("[{}]>> sending email...\n".format(date))
+            self.logger_file.close()
+            cont_logs = open(self.dir_l, "r").read()
+            msg = MIMEMultipart()
+            msg['From'] = self.actual_email
+            msg['To'] = self.actual_emailto
+            msg['Subject'] = "logs"
+            body = "here the logs"
+            msg.attach(MIMEText(body,'plain'))
+
+            fromaddr = self.actual_email
+            password = self.actual_pass
+            toaddr = self.actual_emailto
+            filename = "logs.txt"
+
+            attachment = open(self.dir_l,'rb')
+
+            part = MIMEBase('application', 'octet-stream')
+            part.set_payload((attachment).read())
+            encoders.encode_base64(part)
+            part.add_header('Content-Disposition', "attachment; filename= {}".format(filename))
+            msg.attach(part)
+            text = msg.as_string()
+
+            server = smtplib.SMTP('smtp.gmail.com', 587)
+            server.starttls()
+            try:
+                server.login(fromaddr, password)
+                server.sendmail(fromaddr, toaddr, text)
+                server.quit()
+            except:
+                credential = True
+
+            self.logger_file = open(self.dir_l, "w")
+            self.logger_file.write(cont_logs)
+            if credential:
+                date = datetime.now().strftime('%H:%M:%S %d/%m/%Y')
+                self.logger_file.write("[{}]>> Error_02: wrong credential\n".format(date))
+            else:
+                date = datetime.now().strftime('%H:%M:%S %d/%m/%Y')
+                self.logger_file.write("[{}]>> email sent!.\n".format(date))
         else:
             date = datetime.now().strftime('%H:%M:%S %d/%m/%Y')
-            self.logger_file.write("[{}]>> email sent!.\n".format(date))
+            self.logger_file.write("[{}]>>Error_04: can't send an email without credential, please check logconf.txt!\n")
 
         cfg_cont = "email = {}\n password = {}\n emailto = {}".format(self.actual_email, self.actual_pass,self.actual_emailto)
         self.cfg_file.write(cfg_cont)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
